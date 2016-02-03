@@ -51,21 +51,22 @@ class Point (object):
         return Point(2*p.x - self.x, 2*p.y - self.y)
 
 
-# A line is defined by the equation ax + by = c
-# As well as by passing it two points
+# A line is defined by two points and described by the equation ax + by = c
+# You can create one by passing the values a, b, c of the equation
+# OR by passing it two points
 class Line (object):
     def __init__(self, a=None, b=None, c=None):
+        # if line is defined by two points a and b
         if (c is None):
-            # Line is in format y = slope*x + intercept
             # check for a vertical line
-            if (math.isinf(a)):
+            if (a.x == b.x):
                 self.a = 1
                 self.b = 0
-                self.c = b
+                self.c = a.x
             else:
-                self.a = (-1) * a
-                self.b = 1
-                self.c = b
+                self.a = b.y - a.y
+                self.b = a.x - b.x
+                self.c = (a.x-b.x)*a.y - (a.y-b.y)*a.x
         else:
             # Line is in format ax + by = c
             self.a = a
@@ -75,7 +76,7 @@ class Line (object):
         try:
             if (not self.is_well_defined):
                 raise ValueError(
-                    "Line not well defined",
+                    "Line is not well defined! \n" +
                     "a and b cannot both be zero in L: ax + by = c")
         except ValueError as e:
             print e
@@ -108,7 +109,7 @@ class Line (object):
 
     @property
     def intercept(self):
-        return float('inf') if (self.is_vertical) else ((-1) * self.c/self.b)
+        return float('inf') if self.is_vertical else self.c/self.b
 
     def is_perpendicular(self, l):
         return True if (self.slope * l.slope == -1) else False
@@ -125,26 +126,33 @@ class Line (object):
     # equation of line through p that is
     # parallel to self: L ': ax + by = a*p.x + b*p.y
     def parallel_through_point(self, p):
-        return Line(1, 0, p.x) if self.isVertical \
+        return Line(1, 0, p.x) if self.is_vertical \
             else Line(self.a, self.b, (self.a * p.x) + (self.b * p.y))
 
     # equation of line through p that is
     # perpendicular to  self: L': -abx + ay = -b*p.x + a*p.y
     def perpendicular_through_point(self, p):
         if self.is_horizontal:
-            return Line(0, 1, p.y)
+            return Line(1, 0, p.x)
         else:
-            a = -1 * self.a * self.b
+            a = -1 * self.b
             b = self.a
             c = (self.a * p.y) - (self.b * p.x)
             return Line(a, b, c)
 
     # return the intersection point with another line
-    def point_of_intersection(self, l):
+    def point_of_intersection(self, that):
         # if lines are parallel return None
-        if (self.is_parallel(l)):
+        if (self.is_parallel(that)):
             return None
         else:
-            x = (l.b*self.c - self.b*l.c) / (l.a*self.b - self.a*l.b)
-            y = (self.a*l.c - l.a*self.c) / (l.a*self.b - self.a*l.b)
+            if (self.is_vertical):
+                return Point(self.c, that.c/that.b - that.a/that.b*self.c)
+
+            if (that.is_vertical):
+                return Point(that.c, self.c/self.b - self.a/self.b*that.c)
+
+            x = (that.c/that.b - self.c/self.b) / \
+                (that.a/that.b - self.a/self.b)
+            y = that.c/that.b - that.a/that.b*x
             return Point(x, y)
