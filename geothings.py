@@ -178,6 +178,9 @@ class Chain(object):
         self.points = points
         self.n = len(points)
 
+    def __eq__(self, that):
+        return self.points == that.points
+
     def __hash__(self):
         return hash(self.points)
 
@@ -214,8 +217,28 @@ class Chain(object):
 	return None if current_index == 0 else self.points[current_index-1]	
 
 
+class FourChain(Chain):
+    """"A Four Chain is a four-bar linkage with four points."""
+    def __init__(self, p1, p2, p3, p4):
+	Chain.__init__(self, [p1, p2, p3, p4])
+
+
 class Polygon(Chain):
     """"A polygon is a closed chain."""
     def __init__(self, points):
 	Chain.__init__(self, points)
+
+    def __hash__(self):
+        return hash(self.points)
+
+    def __eq__(self, that):
+        if not self.n == that.n:
+	    return False
+
+	for i in range(0,self.n-1):
+	    rpoints = that.points[i:] + that.points[:i]
+	    if self.points == rpoints:
+		return True 
+
+	return False
 
