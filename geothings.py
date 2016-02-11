@@ -19,7 +19,7 @@ class Point(object):
         return hash((self.x, self.y))
 
     def line_through_point(self, p):
-	"""Returns the line through two points."""
+        """Returns the line through two points."""
         # Is a vertical line
         if (p.x == self.x):
             return Line(1, 0, p.x)
@@ -37,7 +37,7 @@ class Point(object):
             raise
 
     def on_line(self, l):
-    	"""Returns true if the given point is on line l"""
+        """Returns true if the given point is on line l"""
         try:
             return ((l.a * self.x) + (l.b * self.y) == l.c)
         except:
@@ -46,27 +46,26 @@ class Point(object):
 
     def mirror_point(self, p1=None, p2=None):
    	"""Returns the mirror reflection of self across a line p1,
-    	    or a line through p1 and p2."""
+            or a line through p1 and p2."""
         L = p1 if (p2 is None) else Line(p1, p2)
         perpL = L.perpendicular_through_point(self)
         p = L.point_of_intersection(perpL)
         return Point(2*p.x - self.x, 2*p.y - self.y)
 
-    def move(self,x,y):
-	"""Moves the point to the new (x,y) position."""
-	self.x = x
-	self.y = y
-
+    def move(self, x, y):
+        """Moves the point to the new (x,y) position."""
+        self.x = x
+        self.y = y
 
 
 class Line(object):
-    """Euclid: A line is breadthless length.""" 
+    """Euclid: A line is breadthless length."""
     def __init__(self, a=None, b=None, c=None):
-	"""A line is defined by two points and described by the equation ax + by = c 
+	"""A line is defined by two points and described by the equation ax + by = c
 
-	   You can create one by passing the values a, b, c of the equation 
-	   OR by passing it two points.
-	"""
+            You can create one by passing the values a, b, c of the equation
+            OR by passing it two points.
+        """
         # if line is defined by two points a and b
         if (c is None):
             # check for a vertical line
@@ -132,20 +131,20 @@ class Line(object):
         return True if (self.slope == l.slope) else False
 
     def is_overlapping(self, l):
-    	"""Returns true if the two lines are the same."""
+        """Returns true if the two lines are the same."""
         return True if (self.slope == l.slope) and \
             (self.intercept == l.intercept) \
             else False
 
     def parallel_through_point(self, p):
     	"""Computes the equation of the line through p that is
-    	   parallel to self: L ': ax + by = a*p.x + b*p.y."""
+            parallel to self: L ': ax + by = a*p.x + b*p.y."""
         return Line(1, 0, p.x) if self.is_vertical \
             else Line(self.a, self.b, (self.a * p.x) + (self.b * p.y))
 
     def perpendicular_through_point(self, p):
     	"""Computes the equation of the line through p that is
-    	   perpendicular to  self: L': -abx + ay = -b*p.x + a*p.y."""
+            perpendicular to  self: L': -abx + ay = -b*p.x + a*p.y."""
         if self.is_horizontal:
             return Line(1, 0, p.x)
         else:
@@ -155,7 +154,7 @@ class Line(object):
             return Line(a, b, c)
 
     def point_of_intersection(self, that):
-    	"""Returns the intersection point with another line."""
+        """Returns the intersection point with another line."""
         # if lines are parallel return None
         if (self.is_parallel(that)):
             return None
@@ -174,7 +173,7 @@ class Line(object):
 
 class Chain(object):
     def __init__(self, points):
-	"""An open polygonal chain is formed by an ordered list of points CW."""
+        """An open polygonal chain is formed by an ordered list of points CW."""
         self.points = points
         self.n = len(points)
 
@@ -192,53 +191,64 @@ class Chain(object):
             point_str += str(point)
         return point_str
 
-    def next(self,current_point):
+    def next(self, current_point):
 	"""Returns the next point (in CW direction) along the chain.
-	   If the current point is the last point or does not exist, returns null.
-	"""
-	if not current_point in self.points:
-	    return None
-	else: 
-	    current_index = self.points.index(current_point)
+            If the current point is the last point or does not exist,
+            returns null.
+        """
+        if current_point not in self.points:
+            return None
 
-	# if current point is the last in the list return None
-	return None if current_index == self.n-1 else self.points[current_index+1]	
+        current_index = self.points.index(current_point)
+        # if current point is the last in the list return None
+	return None if current_index == self.n-1 \
+            else self.points[current_index+1]
 
-
-    def previous(self,current_point):
+    def previous(self, current_point):
 	"""Returns the previous point (in CW direction) along the chain.
-	   If the current point is the first point or does not exist, returns null.
-	"""
-	if not current_point in self.points:
-	    return None
-	else: 
-	    current_index = self.points.index(current_point)
-	# if current point is the first in the list return None
-	return None if current_index == 0 else self.points[current_index-1]	
+            If the current point is the first point or does not exist,
+            returns null.
+        """
+        if current_point not in self.points:
+            return None
+
+        current_index = self.points.index(current_point)
+        # if current point is the first in the list return None
+        return None if current_index == 0 else self.points[current_index-1]
 
 
 class FourChain(Chain):
-    """"A Four Chain is a four-bar linkage with four points."""
+    """"A FourChain is an open four-bar linkage with four points."""
     def __init__(self, p1, p2, p3, p4):
-	Chain.__init__(self, [p1, p2, p3, p4])
+        Chain.__init__(self, [p1, p2, p3, p4])
 
 
 class Polygon(Chain):
     """"A polygon is a closed chain."""
     def __init__(self, points):
-	Chain.__init__(self, points)
+        Chain.__init__(self, points)
 
     def __hash__(self):
         return hash(self.points)
 
     def __eq__(self, that):
         if not self.n == that.n:
-	    return False
+            return False
 
-	for i in range(0,self.n-1):
-	    rpoints = that.points[i:] + that.points[:i]
-	    if self.points == rpoints:
-		return True 
+        # for each rotation of the list of points of self, check for equality
+        for i in range(0, self.n-1):
+            rpoints = that.points[i:] + that.points[:i]
+            if self.points == rpoints:
+                return True
 
-	return False
+        return False
 
+    def next(self, current_point):
+        """Returns the next point (in CW direction) along the polygon."""
+        next_point = super(Polygon, self).next(current_point)
+        return next_point if next_point is not None else self.points[0]
+
+    def previous(self, current_point):
+        """Returns the previous point (in CW direction) along the polygon."""
+        prev_point = super(Polygon, self).previous(current_point)
+        return prev_point if prev_point is not None else self.points[self.n-1]
