@@ -21,13 +21,14 @@ class Point(object):
     def line_through_point(self, p):
         """Returns the line through two points."""
         # Is a vertical line
-        if (p.x == self.x):
-            return Line(1, 0, p.x)
-        else:
-            a = self.y - p.y
-            b = p.x - self.x
-            c = self.x*(self.y - p.y) + self.y*(p.x - self.x)
-            return Line(a, b, c)
+        #if (p.x == self.x):
+        #    return Line(1, 0, p.x)
+        #else:
+            #a = self.y - p.y
+            #b = p.x - self.x
+            #c = self.x*(self.y - p.y) + self.y*(p.x - self.x)
+            #return Line(a, b, c)
+        return Line(self, p)
 
     def euclidean_distance(self, p):
         try:
@@ -99,7 +100,7 @@ class Line(object):
         if (self.is_vertical and that.is_vertical):
             return self.c == that.c
         else:
-            self.slope == that.slope and self.intercept == that.intercept
+            return self.slope == that.slope and self.intercept == that.intercept
 
     def __hash__(self):
         return hash((self.a, self.b, self.c))
