@@ -53,10 +53,6 @@ class Point(object):
         p = L.point_of_intersection(perpL)
         return Point(2*p.x - self.x, 2*p.y - self.y)
 
-    def move(self, x, y):
-        """Moves the point to the new (x,y) position."""
-        self.x = x
-        self.y = y
 
 
 class Line(object):
@@ -123,7 +119,7 @@ class Line(object):
 
     @property
     def intercept(self):
-        return float('inf') if self.is_vertical else self.c/self.b
+        return self.c/self.a if self.is_vertical else self.c/self.b
 
     def is_perpendicular(self, l):
         return True if (self.slope * l.slope == -1) else False
@@ -194,8 +190,7 @@ class Chain(object):
 
     def next(self, current_point):
 	"""Returns the next point (in CW direction) along the chain.
-            If the current point is the last point or does not exist,
-            returns null.
+	If the current point is the last point or does not exist, returns null.
         """
         if current_point not in self.points:
             return None
@@ -207,8 +202,7 @@ class Chain(object):
 
     def previous(self, current_point):
 	"""Returns the previous point (in CW direction) along the chain.
-            If the current point is the first point or does not exist,
-            returns null.
+	If the current point is the first point or does not exist, returns null.
         """
         if current_point not in self.points:
             return None
