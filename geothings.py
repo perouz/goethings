@@ -232,6 +232,11 @@ class Chain(object):
         # if current point is the first in the list return None
 		return None if current_index == 0 else self.points[current_index-1]
 
+    def draw(self, color):
+   	"""Plots the chain. The `color` attribute can be any of
+            r, b, g, c, m, y, k, w. See the matplotlib doucmentation."""
+        plt.plot(self.X, self.Y, color)
+
 
 class FourChain(Chain):
     """"A FourChain is an open four-bar linkage with four points."""
@@ -268,3 +273,11 @@ class Polygon(Chain):
         """Returns the previous point (in CW direction) along the polygon."""
         prev_point = super(Polygon, self).previous(current_point)
         return prev_point if prev_point is not None else self.points[self.n-1]
+
+    def draw(self, color):
+   	"""Plots the polygon. The `color` attribute can be any of
+            r, b, g, c, m, y, k, w. See the matplotlib doucmentation."""
+        x = self.X + [self.X[0]]
+        y = self.Y + [self.Y[0]]
+        plt.plot(x, y, color)
+
