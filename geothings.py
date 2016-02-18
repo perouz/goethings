@@ -1,6 +1,7 @@
 from __future__ import division
 import math
 import sys
+import matplotlib.pyplot as plt
 
 
 class Point(object):
@@ -18,16 +19,19 @@ class Point(object):
     def __hash__(self):
         return hash((self.x, self.y))
 
+    def to_array(self):
+        return [self.x, self.y]
+
     def line_through_point(self, p):
         """Returns the line through two points."""
         # Is a vertical line
-        #if (p.x == self.x):
+        # if (p.x == self.x):
         #    return Line(1, 0, p.x)
-        #else:
-            #a = self.y - p.y
-            #b = p.x - self.x
-            #c = self.x*(self.y - p.y) + self.y*(p.x - self.x)
-            #return Line(a, b, c)
+        # else:
+        #   a = self.y - p.y
+        #   b = p.x - self.x
+        #   c = self.x*(self.y - p.y) + self.y*(p.x - self.x)
+        #   return Line(a, b, c)
         return Line(self, p)
 
     def euclidean_distance(self, p):
@@ -53,6 +57,11 @@ class Point(object):
         p = L.point_of_intersection(perpL)
         return Point(2*p.x - self.x, 2*p.y - self.y)
 
+    def draw(self, color):
+   	"""Plots and shows the point. The `color` attribute can be any of
+            r, b, g, c, m, y, k, w. See the matplotlib doucmentation."""
+        plt.plot(self.x, self.y, color + 'o')
+        # plt.show()
 
 
 class Line(object):
@@ -167,12 +176,20 @@ class Line(object):
             y = that.c/that.b - that.a/that.b*x
             return Point(x, y)
 
+    def draw(self, xmin=0, xmax=1, color='b'):
+        """Plots and shows the line between the range xmin and xmax."""
+        p1 = self.point_of_intersection(Line(1, 0, xmin))
+        p2 = self.point_of_intersection(Line(1, 0, xmax))
+        plt.plot([p1.x, p2.x], [p1.y, p2.y], color)
+
 
 class Chain(object):
     def __init__(self, points):
         """An open polygonal chain is formed by an ordered list of points CW."""
         self.points = points
         self.n = len(points)
+        self.X = [p.x for p in self.points]
+        self.Y = [p.y for p in self.points]
 
     def __eq__(self, that):
         return self.points == that.points
@@ -188,28 +205,32 @@ class Chain(object):
             point_str += str(point)
         return point_str
 
-    def next(self, current_point):
-	"""Returns the next point (in CW direction) along the chain.
-	If the current point is the last point or does not exist, returns null.
-        """
-        if current_point not in self.points:
-            return None
+    @property
+    def vertices(self):
+        return map(lambda p: (p.x, p.y), self.points)
 
-        current_index = self.points.index(current_point)
-        # if current point is the last in the list return None
-	return None if current_index == self.n-1 \
+    def next(self, current_point):
+		"""Returns the next point (in CV direction) along the chain.
+            If the current point is the last point or does not exsit,
+			returns null."""
+		if current_point not in self.points:
+			return None
+
+		current_index = self.points.index(current_point)
+		# if current point is the last in the list return None
+		return None if current_index == self.n-1 \
             else self.points[current_index+1]
 
     def previous(self, current_point):
-	"""Returns the previous point (in CW direction) along the chain.
-	If the current point is the first point or does not exist, returns null.
-        """
-        if current_point not in self.points:
-            return None
+		"""Returns the previous point (in CW direction) along the chain.
+			If the current point is the first point or does not exist,
+			returns null. """
+		if current_point not in self.points:
+			return None
 
-        current_index = self.points.index(current_point)
+		current_index = self.points.index(current_point)
         # if current point is the first in the list return None
-        return None if current_index == 0 else self.points[current_index-1]
+		return None if current_index == 0 else self.points[current_index-1]
 
 
 class FourChain(Chain):
