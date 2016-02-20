@@ -210,15 +210,15 @@ class Chain(object):
         return map(lambda p: (p.x, p.y), self.points)
 
     def next(self, current_point):
-		"""Returns the next point (in CV direction) along the chain.
+        """Returns the next point (in CV direction) along the chain.
             If the current point is the last point or does not exsit,
-			returns null."""
-		if current_point not in self.points:
-			return None
+            returns null."""
+        if current_point not in self.points:
+            return None
 
-		current_index = self.points.index(current_point)
-		# if current point is the last in the list return None
-		return None if current_index == self.n-1 \
+        current_index = self.points.index(current_point)
+        # if current point is the last in the list return None
+        return None if current_index == self.n-1 \
             else self.points[current_index+1]
 
     def previous(self, current_point):
@@ -280,4 +280,3 @@ class Polygon(Chain):
         x = self.X + [self.X[0]]
         y = self.Y + [self.Y[0]]
         plt.plot(x, y, color)
-
