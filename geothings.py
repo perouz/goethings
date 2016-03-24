@@ -59,7 +59,7 @@ class Point(object):
         p = L.point_of_intersection(perpL)
         return Point(2*p.x - self.x, 2*p.y - self.y)
 
-    def draw(self, color):
+    def draw(self, color='b'):
    	"""Plots and shows the point. The `color` attribute can be any of
             r, b, g, c, m, y, k, w. See the matplotlib doucmentation."""
         plt.plot(self.x, self.y, color + 'o')
@@ -265,7 +265,7 @@ class Chain(object):
         # if current point is the first in the list return None
         return None if current_index == 0 else self.points[current_index-1]
 
-    def draw(self, color):
+    def draw(self, color='r'):
    	"""Plots the chain. The `color` attribute can be any of
             r, b, g, c, m, y, k, w. See the matplotlib doucmentation."""
         plt.plot(self.X, self.Y, color)
