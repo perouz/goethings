@@ -5,7 +5,9 @@ import matplotlib.pyplot as plt
 
 
 class Point(object):
+
     """Euclid: A point is that which has no part."""
+
     def __init__(self, x=0, y=0):
         self.x = x
         self.y = y
@@ -65,7 +67,9 @@ class Point(object):
 
 
 class Line(object):
+
     """Euclid: A line is breadthless length."""
+
     def __init__(self, a=None, b=None, c=None):
 	"""A line is defined by two points and described by the equation ax + by = c
 
@@ -184,6 +188,7 @@ class Line(object):
 
 
 class Chain(object):
+
     def __init__(self, points):
         """An open polygonal chain is formed by an ordered list of points CW."""
         self.points = points
@@ -209,8 +214,36 @@ class Chain(object):
     def vertices(self):
         return map(lambda p: (p.x, p.y), self.points)
 
+    def find_point(self, v):
+        """Find the vertex v in the list of points.
+            returns a handle to the point in the list."""
+        for i in range(0, self.n-1):
+            if (self.points[i] == v):
+                return self.points[i]
+        return None
+
+    def pop(self, v):
+        """Reflects the given vertex v across the line through the two points
+            adjacent to v along the chain."""
+        point = self.find_point(v)
+        # if point is not in the chain return None
+        if point is None:
+            return None
+
+        prevPoint = self.previous(point)
+        nextPoint = self.next(point)
+
+        # if point is the last or first in the list return None
+        if ((prevPoint is None) or (nextPoint is None)):
+            return None
+        else:
+            mirror = point.mirror_point(prevPoint, nextPoint)
+            point.x = mirror.x
+            point.y = mirror.y
+            return point
+
     def next(self, current_point):
-        """Returns the next point (in CV direction) along the chain.
+        """Returns the next point (in cw direction) along the chain.
             If the current point is the last point or does not exsit,
             returns null."""
         if current_point not in self.points:
@@ -222,15 +255,15 @@ class Chain(object):
             else self.points[current_index+1]
 
     def previous(self, current_point):
-		"""Returns the previous point (in CW direction) along the chain.
-			If the current point is the first point or does not exist,
-			returns null. """
-		if current_point not in self.points:
-			return None
+        """Returns the previous point (in CW direction) along the chain.
+        If the current point is the first point or does not exist,
+        returns null. """
+        if current_point not in self.points:
+            return None
 
-		current_index = self.points.index(current_point)
+        current_index = self.points.index(current_point)
         # if current point is the first in the list return None
-		return None if current_index == 0 else self.points[current_index-1]
+        return None if current_index == 0 else self.points[current_index-1]
 
     def draw(self, color):
    	"""Plots the chain. The `color` attribute can be any of
@@ -239,13 +272,17 @@ class Chain(object):
 
 
 class FourChain(Chain):
+
     """"A FourChain is an open four-bar linkage with four points."""
+
     def __init__(self, p1, p2, p3, p4):
         Chain.__init__(self, [p1, p2, p3, p4])
 
 
 class Polygon(Chain):
+
     """"A polygon is a closed chain."""
+
     def __init__(self, points):
         Chain.__init__(self, points)
 
@@ -274,7 +311,7 @@ class Polygon(Chain):
         prev_point = super(Polygon, self).previous(current_point)
         return prev_point if prev_point is not None else self.points[self.n-1]
 
-    def draw(self, color):
+    def draw(self, color='r'):
    	"""Plots the polygon. The `color` attribute can be any of
             r, b, g, c, m, y, k, w. See the matplotlib doucmentation."""
         x = self.X + [self.X[0]]
